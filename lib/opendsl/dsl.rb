@@ -8,10 +8,10 @@ class Dsl
     tree = NodeBuilder.new('root')
     tree.instance_exec(&block)
     @args = args
-    @root = Node.new(tree)
+    @root = Node.new(tree.name, tree.args, tree.children)
   end
 
   def method_missing(method_symbol, *args, &block)
-    @root.respond_to?(method_symbol) ? @root.send(method_symbol, args) : super
+    @root.respond_to?(method_symbol) ? @root.send(method_symbol, *args) : super
   end
 end

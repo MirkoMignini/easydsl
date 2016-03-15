@@ -83,7 +83,7 @@ describe Opendsl do
     end
 
     it 'responds to array methods' do
-      expect(dsl.navbars.count).to be(2)
+      expect(dsl.navbars.count).to eq(2)
       expect(dsl.navbars[0]).to be_kind_of(Node)
     end
 
@@ -140,5 +140,69 @@ describe Opendsl do
         expect(dsl.navbars.where(position: :right)).to eq([])
       end
     end
+  end
+
+  context 'Assignments' do
+
+    context 'Static' do
+      let(:static_dsl) do
+        return Dsl.new do
+          title 'hello'
+
+          menu do
+            position :top
+            config do
+              layer :block
+            end
+            item 'item 1'
+            item 'item 2'
+          end
+        end
+      end
+
+      it 'set and get string value to an existing root property' do
+        dsl_clone = static_dsl.dup
+        string_value = 'test title'
+        expect(dsl_clone.title = string_value).to eq(string_value)
+        expect(dsl_clone.title).to eq(string_value)
+      end
+
+      it 'set and get hash value to an existing root property' do
+        dsl_clone = static_dsl.dup
+        hash_value = {test1: '1', test2: '2'}
+        expect(dsl_clone.title = hash_value).to eq(hash_value)
+        expect(dsl_clone.title).to eq(hash_value)
+      end
+
+      it 'set and get symbol to an existing root property' do
+        dsl_clone = static_dsl.dup
+        symbol_value = :test
+        expect(dsl_clone.title = symbol_value).to eq(symbol_value)
+        expect(dsl_clone.title).to eq(symbol_value)
+      end
+
+      it 'set and get symbol to an existing nested property' do
+        dsl_clone = static_dsl.dup
+        symbol_value = :left
+        expect(dsl_clone.menu.position = symbol_value).to eq(symbol_value)
+        expect(dsl_clone.menu.position).to eq(symbol_value)
+      end
+
+      it 'set and get symbol to an existing double nested property' do
+        dsl_clone = static_dsl.dup
+        symbol_value = :transparent
+        expect(dsl_clone.menu.config.layer = symbol_value).to eq(symbol_value)
+        expect(dsl_clone.menu.config.layer).to eq(symbol_value)
+      end
+    end
+
+    context 'Dynamic' do
+      it 'set and get string to a not existing root property' do
+        dsl_clone = dsl.dup
+        expect(dsl_clone.root_value = 'test value').to eq('test value')
+        expect(dsl_clone.root_value).to eq('test value')
+      end
+    end
+
   end
 end

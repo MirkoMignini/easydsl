@@ -24,7 +24,7 @@ class NodeArray
     results.count > 0 ? results.first : nil
   end
 
-  def method_missing(method_symbol, *args, &block)
+  def method_missing(method_symbol, *args, &_block)
     return @array.send(method_symbol, *args) if @array.respond_to?(method_symbol)
     super
   end
