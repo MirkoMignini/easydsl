@@ -14,30 +14,43 @@ class Node
     end
   end
 
-  def method_missing(method_symbol, *args, &_block)
-    result = @children.select { |child| child.name == method_symbol.to_s.gsub('=', '').to_sym }
-    if method_symbol.to_s.end_with?('=')
-      if result.count > 0
-        node = result.first
-        node.args = args
-      else
-        @children << Node.new(method_symbol.to_s.gsub('=', '').to_sym, args)
-      end
+  def link_block(&block)
+    tree = NodeBuilder.new('tree')
+    tree.instance_exec(&block)
+    tree.children.each { |child| @children << Node.new(child.name, child.args, child.children) }
+  end
+
+  def add_child(method_symbol, *args)
+    child = Node.new(method_symbol.to_s.delete('=').to_sym, args)
+    @children << child
+    child
+  end
+
+  def value_or_self
+    return @args.first if @children.count == 0 && @args.count == 1 && @args.first.class != Node
+    self
+  end
+
+  def get_array(method_symbol)
+    singular = method_symbol.to_s.singularize
+    if singular != method_symbol.to_s
+      return NodeArray.new(@children.select { |child| child.name == singular.to_sym })
+    end
+    nil
+  end
+
+  def method_missing(method_symbol, *args, &block)
+    result = @children.select { |child| child.name == method_symbol.to_s.delete('=').to_sym }
+
+    if block_given?
+      child = result.count > 0 ? result.first : add_child(method_symbol, *args)
+      child.link_block(&block)
+    elsif method_symbol.to_s.end_with?('=')
+      result.count > 0 ? result.first.args = args : add_child(method_symbol, *args)
+    elsif result.count > 0
+      result.first.value_or_self
     else
-      if result.count > 0
-        node = result.first
-        if node.children.count == 0 && node.args.count == 1 && node.args.first.class != Node
-          return node.args.first
-        end
-        return node
-      end
-
-      singular = method_symbol.to_s.singularize
-      if singular != method_symbol.to_s
-        return NodeArray.new(@children.select { |child| child.name == singular.to_sym })
-      end
-
-      nil
+      get_array(method_symbol)
     end
   end
 

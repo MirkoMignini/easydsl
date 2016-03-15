@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'opendsl/dsl'
+require 'pp'
 
 describe Opendsl do
   let(:dsl) do
@@ -143,7 +144,6 @@ describe Opendsl do
   end
 
   context 'Assignments' do
-
     context 'Static' do
       let(:static_dsl) do
         return Dsl.new do
@@ -169,7 +169,7 @@ describe Opendsl do
 
       it 'set and get hash value to an existing root property' do
         dsl_clone = static_dsl.dup
-        hash_value = {test1: '1', test2: '2'}
+        hash_value = { test1: '1', test2: '2' }
         expect(dsl_clone.title = hash_value).to eq(hash_value)
         expect(dsl_clone.title).to eq(hash_value)
       end
@@ -194,6 +194,15 @@ describe Opendsl do
         expect(dsl_clone.menu.config.layer = symbol_value).to eq(symbol_value)
         expect(dsl_clone.menu.config.layer).to eq(symbol_value)
       end
+
+      it 'set a block to an existing property' do
+        dsl_clone = static_dsl.dup
+        expect(dsl_clone.menu.items.count).to eq(2)
+        dsl_clone.menu do
+          item 'item 3'
+        end
+        expect(dsl_clone.menu.items.count).to eq(3)
+      end
     end
 
     context 'Dynamic' do
@@ -203,6 +212,5 @@ describe Opendsl do
         expect(dsl_clone.root_value).to eq('test value')
       end
     end
-
   end
 end

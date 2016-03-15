@@ -12,6 +12,6 @@ class Dsl
   end
 
   def method_missing(method_symbol, *args, &block)
-    @root.respond_to?(method_symbol) ? @root.send(method_symbol, *args) : super
+    @root.respond_to?(method_symbol) ? @root.send(method_symbol, *args, &block) : super
   end
 end
