@@ -60,32 +60,29 @@ class Node
   end
 
   def handle_array(method_symbol, *_args)
-    singular_method_symbol = get_singular_method(method_symbol)
-    if method_symbol != singular_method_symbol
-      return get_filtered_children(singular_method_symbol)
-    end
-    nil
+    return get_filtered_children(method_symbol)
   end
 
   def method_missing(method_symbol, *args, &block)
-    # HACK
-    result = @children.select { |child| child.name == method_symbol.to_s.delete('=').to_sym }
-
     if block_given?
       handle_block(method_symbol, *args, &block)
     elsif method_symbol.to_s == '[]'
       handle_brackets(method_symbol, *args, &block)
     elsif method_symbol.to_s.end_with?('=')
       handle_assignment(method_symbol, *args, &block)
-    elsif result.count > 0
-      handle_node(method_symbol, *args, &block)
     else
-      handle_array(method_symbol, *args, &block)
+      result = @children.select { |child| child.name == method_symbol.to_s.delete('=').to_sym }
+      if result.count > 0
+        handle_node(method_symbol, *args, &block)
+      else
+        singular_method_symbol = get_singular_method(method_symbol)
+        if method_symbol != singular_method_symbol
+          handle_array(singular_method_symbol, *args, &block)
+        else
+          #add_child(method_symbol, *args)
+          nil
+        end
+      end
     end
-  end
-
-  def respond_to?(_method_symbol, _include_private = false)
-    # TODO
-    true
   end
 end

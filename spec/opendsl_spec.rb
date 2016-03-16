@@ -189,12 +189,36 @@ describe Opendsl do
           static_dsl.menu.items.count
         }.from(2).to(3)
       end
+
+      it 'set a block to an existing property with custom code' do
+        expect do
+          static_dsl.menu do
+            (1..10).each do |index|
+              item "item #{index}"
+            end
+          end
+        end.to change {
+          static_dsl.menu.items.count
+        }.by(10)
+      end
     end
 
     context 'Dynamic' do
       it 'set and get string to a not existing root property' do
         expect(dsl.root_value = 'test value').to eq('test value')
         expect(dsl.root_value).to eq('test value')
+      end
+
+      it 'set and get string to a not existing nested property' do
+        expect(dsl.config.custom_value = 'test value').to eq('test value')
+        expect(dsl.config.custom_value).to eq('test value')
+      end
+
+      it 'set a block to a not existing property' do
+        dsl.config_extra do
+          extra 'extra item'
+        end
+        expect(dsl.config_extra.extra).to eq('extra item')
       end
     end
   end
