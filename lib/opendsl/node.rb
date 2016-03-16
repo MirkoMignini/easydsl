@@ -1,5 +1,4 @@
 require 'active_support/inflector'
-require 'opendsl/node_array'
 
 class Node
   attr_reader :children, :name
@@ -26,31 +25,62 @@ class Node
     child
   end
 
-  def value_or_self
-    return @args.first if @children.count == 0 && @args.count == 1 && @args.first.class != Node
-    self
+  def get_singular_method(method_symbol)
+    method_symbol.to_s.singularize.to_sym
   end
 
-  def get_array(method_symbol)
-    singular = method_symbol.to_s.singularize
-    if singular != method_symbol.to_s
-      return NodeArray.new(@children.select { |child| child.name == singular.to_sym })
+  def get_filtered_children(method_symbol)
+    @children.select! { |child| child.name == method_symbol.to_s.delete('=').to_sym }
+    @children
+  end
+
+  def handle_block(method_symbol, *args, &block)
+    collection = get_filtered_children(method_symbol)
+    child = collection.count > 0 ? collection.first : add_child(method_symbol, *args)
+    child.link_block(&block)
+  end
+
+  def handle_brackets(_method_symbol, *args)
+    @args.first[args.first]
+  end
+
+  def handle_assignment(method_symbol, *args)
+    collection = get_filtered_children(method_symbol)
+    collection.count > 0 ? collection.first.args = args : add_child(method_symbol, *args)
+  end
+
+  def handle_node(method_symbol, *_args)
+    collection = get_filtered_children(method_symbol)
+    if  collection.first.children.count == 0 &&
+        collection.first.args.count == 1 &&
+        collection.first.args.first.class != Node
+      return collection.first.args.first
+    end
+    collection.first
+  end
+
+  def handle_array(method_symbol, *_args)
+    singular_method_symbol = get_singular_method(method_symbol)
+    if method_symbol != singular_method_symbol
+      return get_filtered_children(singular_method_symbol)
     end
     nil
   end
 
   def method_missing(method_symbol, *args, &block)
+    # HACK
     result = @children.select { |child| child.name == method_symbol.to_s.delete('=').to_sym }
 
     if block_given?
-      child = result.count > 0 ? result.first : add_child(method_symbol, *args)
-      child.link_block(&block)
+      handle_block(method_symbol, *args, &block)
+    elsif method_symbol.to_s == '[]'
+      handle_brackets(method_symbol, *args, &block)
     elsif method_symbol.to_s.end_with?('=')
-      result.count > 0 ? result.first.args = args : add_child(method_symbol, *args)
+      handle_assignment(method_symbol, *args, &block)
     elsif result.count > 0
-      result.first.value_or_self
+      handle_node(method_symbol, *args, &block)
     else
-      get_array(method_symbol)
+      handle_array(method_symbol, *args, &block)
     end
   end
 

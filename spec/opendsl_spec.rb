@@ -7,6 +7,7 @@ describe Opendsl do
     return Dsl.new do
       config do
         title 'test title'
+        extra short_description: 'short desc', long_description: 'long desc'
         template do
           layout :standard
           color :red
@@ -32,7 +33,7 @@ describe Opendsl do
 
       routing action: 'test', model: Post
 
-      navbar 'hello', 'hello2', position: :top, behaviour: :standard do
+      navbar position: :top, behaviour: :standard do
         item label: 'Dashboard'
         item label: 'Settings'
         item label: 'Profile'
@@ -72,6 +73,10 @@ describe Opendsl do
       expect(dsl.config.template.layout).to eq(:standard)
     end
 
+    it 'returns the value of a nested member hash' do
+      expect(dsl.config.extra[:long_description]).to eq('long desc')
+    end
+
     it 'returns the first element if multiple present' do
       expect(dsl.navbar).not_to be_nil
     end
@@ -80,7 +85,7 @@ describe Opendsl do
   context 'Collections' do
     it 'returns a collection' do
       expect(dsl.navbars).not_to be_nil
-      expect(dsl.navbars).to be_kind_of(NodeArray)
+      expect(dsl.navbars).to be_kind_of(Array)
     end
 
     it 'responds to array methods' do
@@ -90,7 +95,20 @@ describe Opendsl do
 
     it 'returns a nested collection' do
       expect(dsl.menu.items).not_to be_nil
-      expect(dsl.menu.items).to be_kind_of(NodeArray)
+      expect(dsl.menu.items).to be_kind_of(Array)
+    end
+
+    it 'selects a collection based on a filter' do
+      navbars = dsl.navbars.select { |navbar| navbar[:position] == :left }
+      expect(navbars.count).to eq(1)
+      navbars = dsl.navbars.select { |navbar| navbar[:position] == :right }
+      expect(navbars.count).to eq(0)
+      navbars = dsl.navbars.select { |navbar| navbar[:position] == :top }
+      expect(navbars.count).to eq(1)
+    end
+
+    it 'removes an item' do
+      expect { dsl.menu.items.delete_at(0) }.to change { dsl.menu.items.count }.by(-1)
     end
   end
 
@@ -106,40 +124,6 @@ describe Opendsl do
 
     it 'calls a proc in a parameter' do
       expect(dsl.navbar.procs[:my_proc].call('mytext')).to eq('mytext')
-    end
-  end
-
-  context 'Collection queries' do
-    context 'find' do
-      it 'responds to find' do
-        expect(dsl.navbars).to respond_to(:find)
-      end
-
-      it 'returns the right object' do
-        expect(dsl.navbars.find(position: :left)).to be(dsl.navbars.last)
-      end
-
-      it 'returns nil if nothing found' do
-        expect(dsl.navbars.find(position: :right)).to be_nil
-      end
-    end
-
-    context 'where' do
-      it 'responds to where' do
-        expect(dsl.navbars).to respond_to(:where)
-      end
-
-      it 'raise exception if argument is not hash' do
-        expect { dsl.navbars.where('hello') }.to raise_error(ArgumentError)
-      end
-
-      it 'returns the array filtered' do
-        expect(dsl.navbars.where(position: :left).first).to be(dsl.navbars.last)
-      end
-
-      it 'returns empty array if nothing found' do
-        expect(dsl.navbars.where(position: :right)).to eq([])
-      end
     end
   end
 
@@ -197,13 +181,13 @@ describe Opendsl do
       end
 
       it 'set a block to an existing property' do
-        expect {
+        expect do
           static_dsl.menu do
             item 'item 3'
           end
-        }.to change {
+        end.to change {
           static_dsl.menu.items.count
-        }.by(1)
+        }.from(2).to(3)
       end
     end
 
