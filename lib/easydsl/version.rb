@@ -1,3 +1,3 @@
-module Opendsl
+module Easydsl
   VERSION = '0.1.0'.freeze
 end

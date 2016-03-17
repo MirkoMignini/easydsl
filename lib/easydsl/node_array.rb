@@ -1,4 +1,4 @@
-module Opendsl
+module Easydsl
   class NodeArray < Array
   end
 end

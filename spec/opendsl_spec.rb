@@ -1,9 +1,9 @@
 require 'spec_helper'
 require 'pp'
 
-describe Opendsl do
+describe Easydsl do
   let(:dsl) do
-    Opendsl.define do
+    Easydsl.define do
       config do
         title 'test title'
         extra short_description: 'short desc', long_description: 'long desc'
@@ -48,17 +48,17 @@ describe Opendsl do
   end
 
   it 'has a version number' do
-    expect(Opendsl::VERSION).not_to be nil
+    expect(Easydsl::VERSION).not_to be nil
   end
 
   context 'Initialization' do
     it 'initialize dsl' do
       expect(dsl).not_to be_nil
-      expect(dsl).to be_kind_of(Opendsl::Node)
+      expect(dsl).to be_kind_of(Easydsl::Node)
     end
 
     it 'does not initialize dsl if no block given' do
-      expect { Opendsl.define }.to raise_error(ArgumentError)
+      expect { Easydsl.define }.to raise_error(ArgumentError)
     end
   end
 
@@ -68,7 +68,7 @@ describe Opendsl do
     end
 
     it 'returns a node by name' do
-      expect(dsl.config).to be_kind_of(Opendsl::Node)
+      expect(dsl.config).to be_kind_of(Easydsl::Node)
     end
 
     it 'returns the value of a root member' do
@@ -90,7 +90,7 @@ describe Opendsl do
 
   context 'Members override' do
     let(:dsl) do
-      Opendsl.define do
+      Easydsl.define do
         items 'plural'
         item 'singular 1'
         item 'singular 2'
@@ -109,18 +109,18 @@ describe Opendsl do
   context 'Collections' do
     it 'returns a collection' do
       expect(dsl.navbars).not_to be_nil
-      expect(dsl.navbars).to be_kind_of(Opendsl::NodeArray)
+      expect(dsl.navbars).to be_kind_of(Easydsl::NodeArray)
     end
 
     it 'responds to array methods' do
       expect(dsl.navbars.count).to eq(2)
       expect(dsl.resources.count).to eq(1)
-      expect(dsl.navbars[0]).to be_kind_of(Opendsl::Node)
+      expect(dsl.navbars[0]).to be_kind_of(Easydsl::Node)
     end
 
     it 'returns a nested collection' do
       expect(dsl.menu.items).not_to be_nil
-      expect(dsl.menu.items).to be_kind_of(Opendsl::NodeArray)
+      expect(dsl.menu.items).to be_kind_of(Easydsl::NodeArray)
     end
 
     it 'selects a collection based on a filter' do
@@ -155,7 +155,7 @@ describe Opendsl do
   context 'Assignments' do
     context 'Static' do
       let(:static_dsl) do
-        Opendsl.define do
+        Easydsl.define do
           title 'hello'
 
           menu do

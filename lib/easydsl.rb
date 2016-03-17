@@ -1,8 +1,8 @@
-require 'opendsl/version'
-require 'opendsl/node_builder'
-require 'opendsl/node'
+require 'easydsl/version'
+require 'easydsl/node_builder'
+require 'easydsl/node'
 
-module Opendsl
+module Easydsl
   def self.define(*_args, &block)
     raise(ArgumentError, 'A block is mandatory.') unless block_given?
     tree = NodeBuilder.new('root')

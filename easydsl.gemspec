@@ -1,17 +1,17 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'opendsl/version'
+require 'easydsl/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'opendsl'
-  spec.version       = Opendsl::VERSION
+  spec.name          = 'easydsl'
+  spec.version       = Easydsl::VERSION
   spec.authors       = ['Mirko Mignini']
   spec.email         = ['mirko.mignini@gmail.com']
 
-  spec.summary       = 'OpenDSL allows you to create your own ruby dsl'\
+  spec.summary       = 'EasyDSL allows you to create your own ruby dsl'\
                        ' without writing a single line of code.'
-  spec.homepage      = 'https://github.com/MirkoMignini/opendsl'
+  spec.homepage      = 'https://github.com/MirkoMignini/easydsl'
   spec.license       = 'MIT'
   spec.files         = `git ls-files -z`.split("\x0")
                                         .reject { |f| f.match(%r{^(test|spec|features)/}) }

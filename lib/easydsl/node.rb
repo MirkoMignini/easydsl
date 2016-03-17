@@ -1,7 +1,7 @@
 require 'active_support/inflector'
-require 'opendsl/node_array'
+require 'easydsl/node_array'
 
-module Opendsl
+module Easydsl
   class Node
     attr_reader :name
     attr_accessor :args

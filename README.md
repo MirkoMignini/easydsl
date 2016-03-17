@@ -1,19 +1,19 @@
-[![Build Status](https://travis-ci.org/MirkoMignini/opendsl.svg)](https://travis-ci.org/MirkoMignini/opendsl)
-[![Coverage Status](https://coveralls.io/repos/MirkoMignini/opendsl/badge.svg?branch=master&service=github)](https://coveralls.io/github/MirkoMignini/opendsl?branch=master)
-[![Code Climate](https://codeclimate.com/github/MirkoMignini/opendsl/badges/gpa.svg)](https://codeclimate.com/github/MirkoMignini/opendsl)
-[![Gem Version](https://badge.fury.io/rb/opendsl.svg)](https://badge.fury.io/rb/opendsl)
-[![security](https://hakiri.io/github/MirkoMignini/opendsl/master.svg)](https://hakiri.io/github/MirkoMignini/opendsl/master)
+[![Build Status](https://travis-ci.org/MirkoMignini/easydsl.svg)](https://travis-ci.org/MirkoMignini/easydsl)
+[![Coverage Status](https://coveralls.io/repos/MirkoMignini/easydsl/badge.svg?branch=master&service=github)](https://coveralls.io/github/MirkoMignini/easydsl?branch=master)
+[![Code Climate](https://codeclimate.com/github/MirkoMignini/easydsl/badges/gpa.svg)](https://codeclimate.com/github/MirkoMignini/easydsl)
+[![Gem Version](https://badge.fury.io/rb/easydsl.svg)](https://badge.fury.io/rb/easydsl)
+[![security](https://hakiri.io/github/MirkoMignini/easydsl/master.svg)](https://hakiri.io/github/MirkoMignini/easydsl/master)
 
-# Opendsl
+# EasyDSL
 
-OpenDSL allows you to create your own ruby [dsl](https://en.wikipedia.org/wiki/Domain-specific_language) without writing a single line of code.
+EasyDSL allows you to create your own ruby [dsl](https://en.wikipedia.org/wiki/Domain-specific_language) without writing a single line of code.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'opendsl'
+gem 'easydsl'
 ```
 
 And then execute:
@@ -22,7 +22,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install opendsl
+    $ gem install easydsl
 
 ## Usage
 
@@ -36,7 +36,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/MirkoMignini/opendsl. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/MirkoMignini/easydsl. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
 
 
 ## License

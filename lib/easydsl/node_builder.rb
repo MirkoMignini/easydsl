@@ -1,4 +1,4 @@
-module Opendsl
+module Easydsl
   class NodeBuilder
     attr_reader :name, :args
 
