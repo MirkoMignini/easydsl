@@ -2,42 +2,42 @@ require 'active_support/inflector'
 require 'opendsl/node_array'
 
 class Node
-  attr_reader :children, :name
+  attr_reader :name
   attr_accessor :args
 
-  def initialize(name, args = nil, children = nil)
+  def initialize(name, args, node_builders = [])
     @name = name
     @args = args
-    @children = NodeArray.new
-    unless children.nil?
-      children.each { |child| @children << Node.new(child.name, child.args, child.children) }
-    end
+    node_builders.each { |child| add_child(child.name, child.args, child.children) }
+  end
+
+  def children
+    @children ||= Hash.new { |h, k| h[k] = NodeArray.new }
+  end
+
+  def add_child(name, args, node_builders = [])
+    node = Node.new(name, args, node_builders)
+    children[node.name] << node
+    node
   end
 
   def link_block(&block)
     tree = NodeBuilder.new('tree')
     tree.instance_exec(&block)
-    tree.children.each { |child| @children << Node.new(child.name, child.args, child.children) }
+    tree.children.each { |child| add_child(child.name, child.args, child.children) }
   end
 
-  def add_child(method_symbol, *args)
-    child = Node.new(method_symbol.to_s.delete('=').to_sym, args)
-    @children << child
-    child
+  def clean_method_symbol(method_symbol)
+    method_symbol.to_s.delete('=').to_sym
   end
 
-  def get_singular_method(method_symbol)
+  def singular_method_symbol(method_symbol)
     method_symbol.to_s.singularize.to_sym
   end
 
-  def get_filtered_children(method_symbol)
-    @children.select! { |child| child.name == method_symbol.to_s.delete('=').to_sym }
-    @children
-  end
-
   def handle_block(method_symbol, *args, &block)
-    collection = get_filtered_children(method_symbol)
-    child = collection.count > 0 ? collection.first : add_child(method_symbol, *args)
+    collection = children[method_symbol]
+    child = collection.count > 0 ? collection.first : add_child(method_symbol, args)
     child.link_block(&block)
   end
 
@@ -46,22 +46,20 @@ class Node
   end
 
   def handle_assignment(method_symbol, *args)
-    collection = get_filtered_children(method_symbol)
-    collection.count > 0 ? collection.first.args = args : add_child(method_symbol, *args)
+    collection = children[method_symbol]
+    collection.count > 0 ? collection.first.args = args : add_child(method_symbol, args)
   end
 
   def handle_node(method_symbol, *_args)
-    collection = get_filtered_children(method_symbol)
-    if  collection.first.children.count == 0 &&
-        collection.first.args.count == 1 &&
-        collection.first.args.first.class != Node
-      return collection.first.args.first
-    end
-    collection.first
+    return children[method_symbol].first.value_or_self if children[method_symbol].count > 0
+    singular = singular_method_symbol(method_symbol)
+    return children[singular] if method_symbol != singular
+    nil
   end
 
-  def handle_array(method_symbol, *_args)
-    return get_filtered_children(method_symbol)
+  def value_or_self
+    return @args.first if children.count == 0 && @args.count == 1 && @args.first.class != Node
+    self
   end
 
   def method_missing(method_symbol, *args, &block)
@@ -70,20 +68,9 @@ class Node
     elsif method_symbol.to_s == '[]'
       handle_brackets(method_symbol, *args, &block)
     elsif method_symbol.to_s.end_with?('=')
-      handle_assignment(method_symbol, *args, &block)
+      handle_assignment(clean_method_symbol(method_symbol), *args, &block)
     else
-      result = @children.select { |child| child.name == method_symbol.to_s.delete('=').to_sym }
-      if result.count > 0
-        handle_node(method_symbol, *args, &block)
-      else
-        singular_method_symbol = get_singular_method(method_symbol)
-        if method_symbol != singular_method_symbol
-          handle_array(singular_method_symbol, *args, &block)
-        else
-          #add_child(method_symbol, *args)
-          nil
-        end
-      end
+      handle_node(method_symbol, *args, &block)
     end
   end
 end

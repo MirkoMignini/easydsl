@@ -61,8 +61,8 @@ describe Opendsl do
       expect(dsl.not_exist).to be_nil
     end
 
-    it 'returns an object by name' do
-      expect(dsl.config).not_to be_nil
+    it 'returns a node by name' do
+      expect(dsl.config).to be_kind_of(Node)
     end
 
     it 'returns the value of a root member' do
@@ -90,6 +90,7 @@ describe Opendsl do
 
     it 'responds to array methods' do
       expect(dsl.navbars.count).to eq(2)
+      expect(dsl.resources.count).to eq(1)
       expect(dsl.navbars[0]).to be_kind_of(Node)
     end
 
