@@ -85,7 +85,7 @@ describe Opendsl do
   context 'Collections' do
     it 'returns a collection' do
       expect(dsl.navbars).not_to be_nil
-      expect(dsl.navbars).to be_kind_of(Array)
+      expect(dsl.navbars).to be_kind_of(NodeArray)
     end
 
     it 'responds to array methods' do
@@ -95,7 +95,7 @@ describe Opendsl do
 
     it 'returns a nested collection' do
       expect(dsl.menu.items).not_to be_nil
-      expect(dsl.menu.items).to be_kind_of(Array)
+      expect(dsl.menu.items).to be_kind_of(NodeArray)
     end
 
     it 'selects a collection based on a filter' do

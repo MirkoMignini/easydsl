@@ -1,4 +1,5 @@
 require 'active_support/inflector'
+require 'opendsl/node_array'
 
 class Node
   attr_reader :children, :name
@@ -7,7 +8,7 @@ class Node
   def initialize(name, args = nil, children = nil)
     @name = name
     @args = args
-    @children = []
+    @children = NodeArray.new
     unless children.nil?
       children.each { |child| @children << Node.new(child.name, child.args, child.children) }
     end
