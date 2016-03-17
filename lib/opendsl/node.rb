@@ -16,6 +16,8 @@ module Opendsl
       @children ||= Hash.new { |h, k| h[k] = NodeArray.new }
     end
 
+    protected
+
     def add_child(name, args, node_builders = [])
       node = Node.new(name, args, node_builders)
       children[node.name] << node
