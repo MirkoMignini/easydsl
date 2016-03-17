@@ -1,3 +1,9 @@
+[![Build Status](https://travis-ci.org/MirkoMignini/opendsl.svg)](https://travis-ci.org/MirkoMignini/opendsl)
+[![Coverage Status](https://coveralls.io/repos/MirkoMignini/opendsl/badge.svg?branch=master&service=github)](https://coveralls.io/github/MirkoMignini/opendsl?branch=master)
+[![Code Climate](https://codeclimate.com/github/MirkoMignini/opendsl/badges/gpa.svg)](https://codeclimate.com/github/MirkoMignini/opendsl)
+[![Gem Version](https://badge.fury.io/rb/opendsl.svg)](https://badge.fury.io/rb/opendsl)
+[![security](https://hakiri.io/github/MirkoMignini/opendsl/master.svg)](https://hakiri.io/github/MirkoMignini/opendsl/master)
+
 # Opendsl
 
 OpenDSL allows you to create your own ruby [dsl](https://en.wikipedia.org/wiki/Domain-specific_language) without writing a single line of code.
