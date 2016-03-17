@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/MirkoMignini/easydsl.svg)](https://travis-ci.org/MirkoMignini/easydsl)
-[![Coverage Status](https://coveralls.io/repos/MirkoMignini/easydsl/badge.svg?branch=master&service=github)](https://coveralls.io/github/MirkoMignini/easydsl?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/MirkoMignini/easydsl/badge.svg?branch=master)](https://coveralls.io/github/MirkoMignini/easydsl?branch=master)
 [![Code Climate](https://codeclimate.com/github/MirkoMignini/easydsl/badges/gpa.svg)](https://codeclimate.com/github/MirkoMignini/easydsl)
 [![Gem Version](https://badge.fury.io/rb/easydsl.svg)](https://badge.fury.io/rb/easydsl)
 [![security](https://hakiri.io/github/MirkoMignini/easydsl/master.svg)](https://hakiri.io/github/MirkoMignini/easydsl/master)
