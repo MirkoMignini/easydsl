@@ -1,2 +1,4 @@
-class NodeArray < Array
+module Opendsl
+  class NodeArray < Array
+  end
 end

@@ -1,10 +1,9 @@
 require 'spec_helper'
-require 'opendsl/dsl'
 require 'pp'
 
 describe Opendsl do
   let(:dsl) do
-    return Dsl.new do
+    Opendsl.define do
       config do
         title 'test title'
         extra short_description: 'short desc', long_description: 'long desc'
@@ -52,8 +51,15 @@ describe Opendsl do
     expect(Opendsl::VERSION).not_to be nil
   end
 
-  it 'initialize dsl' do
-    expect(dsl).not_to be_nil
+  context 'Initialization' do
+    it 'initialize dsl' do
+      expect(dsl).not_to be_nil
+      expect(dsl).to be_kind_of(Opendsl::Node)
+    end
+
+    it 'does not initialize dsl if no block given' do
+      expect { Opendsl.define }.to raise_error(ArgumentError)
+    end
   end
 
   context 'Members' do
@@ -62,7 +68,7 @@ describe Opendsl do
     end
 
     it 'returns a node by name' do
-      expect(dsl.config).to be_kind_of(Node)
+      expect(dsl.config).to be_kind_of(Opendsl::Node)
     end
 
     it 'returns the value of a root member' do
@@ -82,21 +88,39 @@ describe Opendsl do
     end
   end
 
+  context 'Members override' do
+    let(:dsl) do
+      Opendsl.define do
+        items 'plural'
+        item 'singular 1'
+        item 'singular 2'
+      end
+    end
+
+    it 'returns items (plural) instead of items array' do
+      expect(dsl.items).to eq('plural')
+    end
+
+    it 'returns first item' do
+      expect(dsl.item).to eq('singular 1')
+    end
+  end
+
   context 'Collections' do
     it 'returns a collection' do
       expect(dsl.navbars).not_to be_nil
-      expect(dsl.navbars).to be_kind_of(NodeArray)
+      expect(dsl.navbars).to be_kind_of(Opendsl::NodeArray)
     end
 
     it 'responds to array methods' do
       expect(dsl.navbars.count).to eq(2)
       expect(dsl.resources.count).to eq(1)
-      expect(dsl.navbars[0]).to be_kind_of(Node)
+      expect(dsl.navbars[0]).to be_kind_of(Opendsl::Node)
     end
 
     it 'returns a nested collection' do
       expect(dsl.menu.items).not_to be_nil
-      expect(dsl.menu.items).to be_kind_of(NodeArray)
+      expect(dsl.menu.items).to be_kind_of(Opendsl::NodeArray)
     end
 
     it 'selects a collection based on a filter' do
@@ -131,7 +155,7 @@ describe Opendsl do
   context 'Assignments' do
     context 'Static' do
       let(:static_dsl) do
-        return Dsl.new do
+        Opendsl.define do
           title 'hello'
 
           menu do
