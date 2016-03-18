@@ -98,8 +98,11 @@ describe 'Operators' do
       it 'set a block to a not existing property' do
         dsl.config_extra do
           extra 'extra item'
+          item
+          item
         end
         expect(dsl.config_extra.extra).to eq('extra item')
+        expect(dsl.config_extra.items.count).to eq(2)
       end
     end
   end

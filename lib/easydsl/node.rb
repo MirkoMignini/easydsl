@@ -51,6 +51,7 @@ module Easydsl
     def handle_operators(method_symbol, *args)
       method_symbol_wo = clean_method_symbol(method_symbol)
       case method_symbol[-1]
+      when ']' then handle_brackets(method_symbol_wo, *args)
       when '=' then handle_assignment(method_symbol_wo, *args)
       when '?' then handle_question(method_symbol_wo, *args)
       else
@@ -85,15 +86,9 @@ module Easydsl
     end
 
     def method_missing(method_symbol, *args, &block)
-      if block_given?
-        handle_block(method_symbol, *args, &block)
-      elsif method_symbol.to_s == '[]'
-        handle_brackets(method_symbol, *args, &block)
-      elsif method_symbol.to_s.end_with?('=', '?')
-        handle_operators(method_symbol, *args, &block)
-      else
-        handle_node(method_symbol, *args, &block)
-      end
+      return handle_block(method_symbol, *args, &block) if block_given?
+      return handle_operators(method_symbol, *args) if method_symbol.to_s.end_with?('=', '?', '[]')
+      handle_node(method_symbol, *args, &block)
     end
   end
 end
