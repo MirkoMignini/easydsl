@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'pp'
 
 describe Easydsl do
   let(:dsl) do
@@ -149,102 +148,6 @@ describe Easydsl do
 
     it 'calls a proc in a parameter' do
       expect(dsl.navbar.procs[:my_proc].call('mytext')).to eq('mytext')
-    end
-  end
-
-  context 'Assignments' do
-    context 'Static' do
-      let(:static_dsl) do
-        Easydsl.define do
-          title 'hello'
-
-          menu do
-            position :top
-            config do
-              layer :block
-            end
-            item 'item 1'
-            item 'item 2'
-          end
-        end
-      end
-
-      it 'set and get string value to an existing root property' do
-        string_value = 'test title'
-        expect(static_dsl.title = string_value).to eq(string_value)
-        expect(static_dsl.title).to eq(string_value)
-      end
-
-      it 'set and get array value to an existing root property' do
-        array_value = [1, 2, 3]
-        expect(static_dsl.title = array_value).to eq(array_value)
-        expect(static_dsl.title).to eq(array_value)
-      end
-
-      it 'set and get hash value to an existing root property' do
-        hash_value = { test1: '1', test2: '2' }
-        expect(static_dsl.title = hash_value).to eq(hash_value)
-        expect(static_dsl.title).to eq(hash_value)
-      end
-
-      it 'set and get symbol to an existing root property' do
-        symbol_value = :test
-        expect(static_dsl.title = symbol_value).to eq(symbol_value)
-        expect(static_dsl.title).to eq(symbol_value)
-      end
-
-      it 'set and get symbol to an existing nested property' do
-        symbol_value = :left
-        expect(static_dsl.menu.position = symbol_value).to eq(symbol_value)
-        expect(static_dsl.menu.position).to eq(symbol_value)
-      end
-
-      it 'set and get symbol to an existing double nested property' do
-        symbol_value = :transparent
-        expect(static_dsl.menu.config.layer = symbol_value).to eq(symbol_value)
-        expect(static_dsl.menu.config.layer).to eq(symbol_value)
-      end
-
-      it 'set a block to an existing property' do
-        expect do
-          static_dsl.menu do
-            item 'item 3'
-          end
-        end.to change {
-          static_dsl.menu.items.count
-        }.from(2).to(3)
-      end
-
-      it 'set a block to an existing property with custom code' do
-        expect do
-          static_dsl.menu do
-            (1..10).each do |index|
-              item "item #{index}"
-            end
-          end
-        end.to change {
-          static_dsl.menu.items.count
-        }.by(10)
-      end
-    end
-
-    context 'Dynamic' do
-      it 'set and get string to a not existing root property' do
-        expect(dsl.root_value = 'test value').to eq('test value')
-        expect(dsl.root_value).to eq('test value')
-      end
-
-      it 'set and get string to a not existing nested property' do
-        expect(dsl.config.custom_value = 'test value').to eq('test value')
-        expect(dsl.config.custom_value).to eq('test value')
-      end
-
-      it 'set a block to a not existing property' do
-        dsl.config_extra do
-          extra 'extra item'
-        end
-        expect(dsl.config_extra.extra).to eq('extra item')
-      end
     end
   end
 end
