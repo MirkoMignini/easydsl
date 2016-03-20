@@ -69,8 +69,6 @@ module Easydsl
       when ']' then handle_brackets(method_symbol_wo, *args)
       when '=' then handle_assignment(method_symbol_wo, *args)
       when '?' then handle_question(method_symbol_wo, *args)
-      else
-        raise ArgumentError, "Unhandled operator: #{method_symbol[-1]}"
       end
     end
 
