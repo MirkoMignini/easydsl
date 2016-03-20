@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'pp'
 
 describe Easydsl do
   let(:dsl) do
@@ -148,6 +149,44 @@ describe Easydsl do
 
     it 'calls a proc in a parameter' do
       expect(dsl.navbar.procs[:my_proc].call('mytext')).to eq('mytext')
+    end
+  end
+
+  context 'Index' do
+    let(:dsl) do
+      Easydsl.define do
+        item '1'
+        item '2'
+        hello '1'
+        hello '2'
+      end
+    end
+
+    it 'returns all children' do
+      expect(dsl.all_nodes).to be_kind_of(Array)
+      expect(dsl.all_nodes[0]).to be_kind_of(Easydsl::Node)
+      expect(dsl.all_nodes.count).to eq(4)
+    end
+
+    it 'checks if all children are sorted' do
+      expect(dsl.all_nodes[0].index).to eq(0)
+      expect(dsl.all_nodes[1].index).to eq(1)
+      expect(dsl.all_nodes[2].index).to eq(2)
+      expect(dsl.all_nodes[3].index).to eq(3)
+    end
+
+    it 'returns the max index' do
+      expect(dsl.max_index).to eq(3)
+    end
+
+    it 'returns the max index when a block is added' do
+      expect do
+        dsl.add_block do
+          item 'item 3'
+        end
+      end.to change {
+        dsl.all_nodes.count
+      }.from(4).to(5)
     end
   end
 end

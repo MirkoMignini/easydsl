@@ -6,6 +6,7 @@ describe 'Operators' do
       let(:dsl) do
         Easydsl.define do
           title 'hello'
+          item 'item 1'
 
           menu do
             position :top
@@ -52,6 +53,16 @@ describe 'Operators' do
         symbol_value = :transparent
         expect(dsl.menu.config.layer = symbol_value).to eq(symbol_value)
         expect(dsl.menu.config.layer).to eq(symbol_value)
+      end
+
+      it 'set a block to root' do
+        expect do
+          dsl.add_block do
+            item 'item 3'
+          end
+        end.to change {
+          dsl.items.count
+        }.from(1).to(2)
       end
 
       it 'set a block to an existing property' do
