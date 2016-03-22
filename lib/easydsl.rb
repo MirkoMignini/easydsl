@@ -7,6 +7,6 @@ module Easydsl
     raise(ArgumentError, 'A block is mandatory.') unless block_given?
     tree = NodeBuilder.new('root')
     tree.instance_exec(&block)
-    Node.new(tree.name, tree.args, 0, tree.nodes)
+    Node.new(tree.name, tree.args, 0, nil, tree.nodes)
   end
 end

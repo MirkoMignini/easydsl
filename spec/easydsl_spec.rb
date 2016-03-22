@@ -150,6 +150,14 @@ describe Easydsl do
     it 'calls a proc in a parameter' do
       expect(dsl.navbar.procs[:my_proc].call('mytext')).to eq('mytext')
     end
+
+    it 'returns nil parent if root node' do
+      expect(dsl.parent).to be_nil
+    end
+
+    it 'returns root node parent if root nested node' do
+      expect(dsl.navbar.parent).to eq(dsl)
+    end
   end
 
   context 'Index' do

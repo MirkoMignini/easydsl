@@ -3,14 +3,17 @@ require 'easydsl/node_array'
 
 module Easydsl
   class Node
-    attr_reader :name, :index
+    attr_reader :name, :index, :parent
     attr_accessor :args
 
-    def initialize(name, args, index, node_builders = [])
+    def initialize(name, args, index, parent, node_builders = [])
       @name = name
       @args = args
       @index = index
-      node_builders.each_with_index { |item, i| add_child(item.name, item.args, i, item.nodes) }
+      @parent = parent
+      node_builders.each_with_index do |item, i|
+        add_child(item.name, item.args, i, self, item.nodes)
+      end
     end
 
     def nodes
@@ -38,9 +41,8 @@ module Easydsl
 
     protected
 
-    def add_child(name, args, index = -1, node_builders = [])
-      index = max_index if index == -1
-      node = Node.new(name, args, index, node_builders)
+    def add_child(name, args, index, parent, node_builders = [])
+      node = Node.new(name, args, index, parent, node_builders)
       nodes[node.name] << node
       node
     end
@@ -55,7 +57,11 @@ module Easydsl
 
     def handle_block(method_symbol, *args, &block)
       collection = nodes[method_symbol]
-      child = collection.count > 0 ? collection.first : add_child(method_symbol, args)
+      child = if collection.count > 0
+        collection.first
+      else
+        add_child(method_symbol, args, max_index, self)
+      end
       child.add_block(&block)
     end
 
@@ -74,7 +80,11 @@ module Easydsl
 
     def handle_assignment(method_symbol, *args)
       collection = nodes[method_symbol]
-      collection.count > 0 ? collection.first.args = args : add_child(method_symbol, args)
+      if collection.count > 0
+        collection.first.args = args
+      else
+        add_child(method_symbol, args, max_index, self)
+      end
     end
 
     def handle_question(method_symbol, *_args)
