@@ -57,7 +57,7 @@ describe 'Operators' do
 
       it 'set a block to root' do
         expect do
-          dsl.add_block do
+          dsl.define do
             item 'item 3'
           end
         end.to change {
@@ -115,6 +115,51 @@ describe 'Operators' do
         expect(dsl.config_extra.extra).to eq('extra item')
         expect(dsl.config_extra.items.count).to eq(2)
       end
+    end
+  end
+
+  context 'Operator !' do
+    let(:dsl) do
+      Easydsl.define do
+        config! :hello do
+          title! 'test'
+          environment :debug
+        end
+        item do
+          layout :left
+        end
+        item
+      end
+    end
+
+    it 'set singleton flags correctly' do
+      expect(dsl.config.singleton).to be(true)
+      expect(dsl.item.singleton).to be(false)
+    end
+
+    it 'modify the existing root node' do
+      dsl.define do
+        config do
+          title 'changed'
+          new_property 'hello'
+        end
+      end
+      expect(dsl.configs.count).to eq(1)
+      expect(dsl.config.nodes.count).to eq(3)
+      expect(dsl.config.title).to eq('changed')
+      expect(dsl.config.environment).to eq(:debug)
+      expect(dsl.config.new_property).to eq('hello')
+    end
+
+    it 'modify the existing nested node' do
+      expect(dsl.config.nodes.count).to eq(2)
+      expect(dsl.config.title).to eq('test')
+      dsl.config do
+        title 'changed'
+      end
+      expect(dsl.config.nodes.count).to eq(2)
+      expect(dsl.config.title).to eq('changed')
+      expect(dsl.config.environment).to eq(:debug)
     end
   end
 

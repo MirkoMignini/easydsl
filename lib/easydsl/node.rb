@@ -3,11 +3,12 @@ require 'easydsl/node_array'
 
 module Easydsl
   class Node
-    attr_reader :name, :index, :parent
+    attr_reader :name, :index, :parent, :singleton
     attr_accessor :args
 
     def initialize(name, args, index, parent, node_builders = [])
-      @name = name
+      @name = name.to_s.chomp('!').to_sym
+      @singleton = name[-1] == '!'
       @args = args
       @index = index
       @parent = parent
@@ -30,21 +31,39 @@ module Easydsl
       all_nodes.map(&:index).max || 0
     end
 
-    def add_block(&block)
-      tree = NodeBuilder.new('tree')
-      tree.instance_exec(&block)
-      base_index = max_index
-      tree.nodes.each_with_index do |item, index|
-        add_child(item.name, item.args, base_index + index, item.nodes)
-      end
+    def define(&block)
+      add_block(&block)
     end
 
     protected
 
+    def add_hierarchy(to, tree, base_index)
+      tree.each_with_index do |item, index|
+        to.add_child(item.name, item.args, base_index + index, to, item.nodes)
+      end
+    end
+
+    def add_block(&block)
+      tree = NodeBuilder.new('tree')
+      tree.instance_exec(&block)
+      add_hierarchy(self, tree.nodes, max_index)
+    end
+
     def add_child(name, args, index, parent, node_builders = [])
+      node = handle_singleton(name, args, node_builders)
+      return node unless node.nil?
       node = Node.new(name, args, index, parent, node_builders)
       nodes[node.name] << node
       node
+    end
+
+    def handle_singleton(name, args, node_builders = [])
+      return nil unless nodes.key?(name)
+      node = nodes[name].first
+      return nil if node.nil? || node.singleton == false
+      node.args = args
+      add_hierarchy(node, node_builders, node.max_index)
+      nodes[name].first
     end
 
     def clean_method_symbol(method_symbol)

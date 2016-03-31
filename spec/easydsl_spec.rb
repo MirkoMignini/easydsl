@@ -86,6 +86,12 @@ describe Easydsl do
     it 'returns the first element if multiple present' do
       expect(dsl.navbar).not_to be_nil
     end
+
+    it 'returns the value if called directly' do
+      node = dsl.config.title
+      expect(node).to eq('test title')
+      expect(dsl.config.title).to eq('test title')
+    end
   end
 
   context 'Members override' do

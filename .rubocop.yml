@@ -41,3 +41,6 @@ Documentation:
 
 Rails:
   Enabled: true
+
+Metrics/ClassLength:
+  Max: 150
