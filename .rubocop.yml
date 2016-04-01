@@ -44,3 +44,9 @@ Rails:
 
 Metrics/ClassLength:
   Max: 150
+
+Style/AccessorMethodName:
+  Enabled: false
+
+Style/PredicateName:
+  Enabled: false

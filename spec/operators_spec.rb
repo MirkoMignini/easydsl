@@ -133,8 +133,8 @@ describe 'Operators' do
     end
 
     it 'set singleton flags correctly' do
-      expect(dsl.config.singleton).to be(true)
-      expect(dsl.item.singleton).to be(false)
+      expect(dsl.config.is_singleton?).to be(true)
+      expect(dsl.item.is_singleton?).to be(false)
     end
 
     it 'modify the existing root node' do
@@ -145,19 +145,19 @@ describe 'Operators' do
         end
       end
       expect(dsl.configs.count).to eq(1)
-      expect(dsl.config.nodes.count).to eq(3)
+      expect(dsl.config.get_nodes.count).to eq(3)
       expect(dsl.config.title).to eq('changed')
       expect(dsl.config.environment).to eq(:debug)
       expect(dsl.config.new_property).to eq('hello')
     end
 
     it 'modify the existing nested node' do
-      expect(dsl.config.nodes.count).to eq(2)
+      expect(dsl.config.get_nodes.count).to eq(2)
       expect(dsl.config.title).to eq('test')
       dsl.config do
         title 'changed'
       end
-      expect(dsl.config.nodes.count).to eq(2)
+      expect(dsl.config.get_nodes.count).to eq(2)
       expect(dsl.config.title).to eq('changed')
       expect(dsl.config.environment).to eq(:debug)
     end

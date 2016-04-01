@@ -1,9 +1,15 @@
 module Easydsl
   class NodeBuilder
-    attr_reader :name, :args
-
-    def nodes
+    def get_nodes
       @nodes ||= []
+    end
+
+    def get_name
+      @name
+    end
+
+    def get_args
+      @args
     end
 
     def initialize(name, *args)
@@ -13,7 +19,7 @@ module Easydsl
 
     def method_missing(method_symbol, *args, &block)
       child = NodeBuilder.new(method_symbol, *args)
-      nodes.push(child)
+      get_nodes.push(child)
       child.instance_exec(&block) if block_given?
     end
   end

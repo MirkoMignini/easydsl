@@ -158,11 +158,11 @@ describe Easydsl do
     end
 
     it 'returns nil parent if root node' do
-      expect(dsl.parent).to be_nil
+      expect(dsl.get_parent).to be_nil
     end
 
     it 'returns root node parent if root nested node' do
-      expect(dsl.navbar.parent).to eq(dsl)
+      expect(dsl.navbar.get_parent).to eq(dsl)
     end
   end
 
@@ -177,20 +177,20 @@ describe Easydsl do
     end
 
     it 'returns all children' do
-      expect(dsl.all_nodes).to be_kind_of(Array)
-      expect(dsl.all_nodes[0]).to be_kind_of(Easydsl::Node)
-      expect(dsl.all_nodes.count).to eq(4)
+      expect(dsl.get_all_nodes).to be_kind_of(Array)
+      expect(dsl.get_all_nodes[0]).to be_kind_of(Easydsl::Node)
+      expect(dsl.get_all_nodes.count).to eq(4)
     end
 
     it 'checks if all children are sorted' do
-      expect(dsl.all_nodes[0].index).to eq(0)
-      expect(dsl.all_nodes[1].index).to eq(1)
-      expect(dsl.all_nodes[2].index).to eq(2)
-      expect(dsl.all_nodes[3].index).to eq(3)
+      expect(dsl.get_all_nodes[0].get_index).to eq(0)
+      expect(dsl.get_all_nodes[1].get_index).to eq(1)
+      expect(dsl.get_all_nodes[2].get_index).to eq(2)
+      expect(dsl.get_all_nodes[3].get_index).to eq(3)
     end
 
     it 'returns the max index' do
-      expect(dsl.max_index).to eq(3)
+      expect(dsl.get_max_index).to eq(3)
     end
 
     it 'returns the max index when a block is added' do
@@ -199,7 +199,7 @@ describe Easydsl do
           item 'item 3'
         end
       end.to change {
-        dsl.all_nodes.count
+        dsl.get_all_nodes.count
       }.from(4).to(5)
     end
   end
