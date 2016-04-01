@@ -32,6 +32,8 @@ describe Easydsl do
 
       routing action: 'test', model: Post
 
+      args_test :hello, 'hello', item: 1, param: 2
+
       navbar position: :top, behaviour: :standard do
         item label: 'Dashboard'
         item label: 'Settings'
@@ -91,6 +93,10 @@ describe Easydsl do
       node = dsl.config.title
       expect(node).to eq('test title')
       expect(dsl.config.title).to eq('test title')
+    end
+
+    it 'returns the args' do
+      expect(dsl.args_test.get_args).to eq([:hello, 'hello', { item: 1, param: 2 }])
     end
   end
 
